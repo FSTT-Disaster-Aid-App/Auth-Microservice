@@ -4,7 +4,8 @@ import ma.fstt.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
-public interface UserCredentialRepository extends JpaRepository<User, Integer> {
+public interface UserCredentialRepository extends JpaRepository<User, UUID> {
 	Optional<User> findByEmail(String username);
 }

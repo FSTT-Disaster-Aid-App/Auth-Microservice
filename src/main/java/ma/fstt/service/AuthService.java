@@ -4,6 +4,7 @@ import ma.fstt.entity.User;
 import ma.fstt.repository.UserCredentialRepository;
 
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,7 +35,7 @@ public class AuthService {
 		jwtService.validateToken(token);
 	}
 
-	public Long getUserIdByUsername(String email) {
+	public UUID getUserIdByUsername(String email) {
 		return repository.findByEmail(email)
 				.map(User::getId)
 				.orElse(null);
