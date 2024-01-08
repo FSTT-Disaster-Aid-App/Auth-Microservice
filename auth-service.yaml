@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-app
+  labels:
+    app: auth-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-app
+  template:
+    metadata:
+      labels:
+        app: auth-app
+    spec:
+      containers:
+        - name: auth-app
+          image: ayga/auth-service
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9898
+
+          env:
+            - name: SPRING_APPLICATION_NAME
+              value: "auth"
+            - name: SERVER_PORT
+              value: "9898"
+            - name: EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE
+              value: "http://eureka:8761/eureka/"
+            - name: SPRING_SECURITY_ENABLED
+              value: "false"
+            - name: CORS_ALLOWED_ORIGINS
+              value: "*"
+            - name: CORS_ALLOWED_METHODS
+              value: "*"
+            - name: CORS_ALLOWED_HEADERS
+              value: "*"
+      imagePullSecrets:
+        - name: my-dockerhub-secret
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: auth-app
+  name: auth-app-nodeport
+spec:
+  type: NodePort
+  ports:
+    - name: auth-app-service-port
+      port: 9898
+      targetPort: 9898
+      nodePort: 30008 # You can specify a different nodePort if needed
+      protocol: TCP
+  selector:
+    app: auth-app
