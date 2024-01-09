@@ -45,10 +45,16 @@ public class UserController {
 	public ResponseEntity<?> getUserById(@PathVariable String id) {
 		try {
 			UUID userId = UUID.fromString(id);
-			Optional<User> user = userService.getUserById(userId);
+			Optional<User> userOptional = userService.getUserById(userId);
+			if (userOptional.isPresent()) {
+				User user = userOptional.get();
 
-			if (user != null) {
-				return ResponseEntity.ok(user);
+				// Convert User to UserDTO
+				UserDTO userDTO = new UserDTO();
+				userDTO.setName(user.getName());
+				userDTO.setEmail(user.getEmail());
+
+				return ResponseEntity.ok(userDTO);
 			} else {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
 			}
@@ -61,4 +67,26 @@ public class UserController {
 					.body(Map.of("status", "error", "message", e.getMessage()));
 		}
 	}
+}
+
+class UserDTO {
+	private String name;
+	private String email;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 }
