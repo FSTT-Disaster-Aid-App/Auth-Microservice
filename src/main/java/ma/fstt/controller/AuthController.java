@@ -3,9 +3,13 @@ package ma.fstt.controller;
 import ma.fstt.dto.AuthRequest;
 import ma.fstt.entity.User;
 import ma.fstt.service.AuthService;
+import ma.fstt.service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -21,6 +25,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 	@Autowired
 	private AuthService service;
+
+	@Autowired
+	UserService userService;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -91,4 +98,24 @@ public class AuthController {
 		}
 	}
 
+	@GetMapping(path = "/{id}", produces = "application/json")
+	public ResponseEntity<?> getUserById(@PathVariable String id) {
+		try {
+			UUID userId = UUID.fromString(id);
+			Optional<User> user = userService.getUserById(userId);
+
+			if (user != null) {
+				return ResponseEntity.ok(user);
+			} else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
+			}
+		} catch (IllegalArgumentException e) {
+			// Handle invalid UUID format
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(Map.of("status", "error", "message", "Invalid UUID format"));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("status", "error", "message", e.getMessage()));
+		}
+	}
 }

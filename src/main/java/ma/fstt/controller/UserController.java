@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ma.fstt.entity.User;
-import ma.fstt.repository.UserCredentialRepository;
 import ma.fstt.service.JwtService;
 import ma.fstt.service.UserService;
 
